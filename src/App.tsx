@@ -71,7 +71,6 @@ function App() {
   return (
     <>
       <div>
-        <p>{API_BASE_URL}</p>
         <a href="https://vitejs.dev" target="_blank" rel="noopener noreferrer">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
