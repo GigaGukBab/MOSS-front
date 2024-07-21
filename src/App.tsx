@@ -4,8 +4,13 @@ import viteLogo from '/vite.svg';
 import './App.css';
 import axios from 'axios';
 
+interface User {
+  username: string;
+  // 필요한 다른 속성들도 여기에 추가
+}
+
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
