@@ -5,19 +5,45 @@ import './App.css';
 import axios from 'axios';
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  const fetchAPI = async () => {
-    const response = await axios.get(
-      'https://port-0-moss-lyu6qvc4ff667282.sel4.cloudtype.app'
-    );
-    console.log(response);
-  };
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAPI();
+    checkAuthStatus();
   }, []);
 
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get(
+        'https://port-0-moss-lyu6qvc4ff667282.sel4.cloudtype.app/api/auth/status'
+      );
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = () => {
+    window.location.href =
+      'https://port-0-moss-lyu6qvc4ff667282.sel4.cloudtype.app/api/auth/auth0';
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        'https://port-0-moss-lyu6qvc4ff667282.sel4.cloudtype.app/api/auth/logout'
+      );
+      setUser(null);
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <div>
@@ -28,18 +54,17 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>MOSS</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        {user ? (
+          <>
+            <h1>환영합니다, {user.username}님!!!</h1>
+            <button onClick={handleLogout}>로그아웃</button>
+          </>
+        ) : (
+          <button onClick={handleLogin}>로그인하기</button>
+        )}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }
