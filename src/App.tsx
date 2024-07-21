@@ -23,8 +23,15 @@ function App() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get<User>(`${API_BASE_URL}/api/auth/status`);
-      setUser(response.data);
+      const response = await axios.get<User>(
+        `${API_BASE_URL}/api/auth/status`,
+        { withCredentials: true }
+      );
+      if (response.data && response.data._id) {
+        setUser(response.data);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
       console.error('Authentication check failed:', error);
       setUser(null);
@@ -41,6 +48,11 @@ function App() {
     try {
       await axios.post(`${API_BASE_URL}/api/auth/logout`);
       setUser(null);
+      // 로컬 스토리지/세션 스토리지 클리어
+      localStorage.clear();
+      sessionStorage.clear();
+      // 페이지 리로드
+      window.location.reload();
     } catch (error) {
       console.error('Logout failed:', error);
     }
