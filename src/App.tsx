@@ -46,7 +46,11 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/api/auth/logout`);
+      await axios.post(
+        `${API_BASE_URL}/api/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
       setUser(null);
       // 로컬 스토리지/세션 스토리지 클리어
       localStorage.clear();
@@ -55,6 +59,8 @@ function App() {
       window.location.reload();
     } catch (error) {
       console.error('Logout failed:', error);
+      // 오류 처리를 추가할 수 있습니다. 예를 들어:
+      // alert('로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -65,6 +71,7 @@ function App() {
   return (
     <>
       <div>
+        <p>{API_BASE_URL}</p>
         <a href="https://vitejs.dev" target="_blank" rel="noopener noreferrer">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
