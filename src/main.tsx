@@ -4,12 +4,19 @@ import App from './App.tsx';
 import './index.css';
 import ErrorPage from './error-page.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ProtectedPage from './ProtectedPage.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'protected',
+        element: <ProtectedPage />,
+      },
+    ],
   },
 ]);
 

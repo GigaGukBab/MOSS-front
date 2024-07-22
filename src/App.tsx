@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import axios from 'axios';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
 import './App.css';
 
 interface User {
@@ -11,11 +10,21 @@ interface User {
   __v: number;
 }
 
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: () => void;
+  logout: () => void;
+}
+
+export const AuthContext = createContext<AuthContextType | null>(null);
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkAuthStatus();
@@ -52,15 +61,11 @@ function App() {
         { withCredentials: true }
       );
       setUser(null);
-      // 로컬 스토리지/세션 스토리지 클리어
       localStorage.clear();
       sessionStorage.clear();
-      // 페이지 리로드
-      window.location.reload();
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
-      // 오류 처리를 추가할 수 있습니다. 예를 들어:
-      // alert('로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -68,34 +73,38 @@ function App() {
     return <div>Loading...</div>;
   }
 
+  const authContextValue: AuthContextType = {
+    user,
+    isAuthenticated: !!user,
+    login: handleLogin,
+    logout: handleLogout,
+  };
+
   return (
-    <>
+    <AuthContext.Provider value={authContextValue}>
       <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noopener noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noopener noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="auth-status">
+        <nav>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/protected">Protected Page</Link></li>
+            {user ? (
+              <li><button onClick={handleLogout}>Logout</button></li>
+            ) : (
+              <li><Link to="/login">Login</Link></li>
+            )}
+          </ul>
+        </nav>
+
+        <h1>Welcome to the App</h1>
         {user ? (
-          <>
-            <p>환영합니다, {user.username}님 !!!</p>
-            <button onClick={handleLogout}>Logout</button>
-          </>
+          <p>Hello, {user.username}!</p>
         ) : (
-          <>
-            <p>로그인을 해주세요.</p>
-            <button onClick={handleLogin}>Login</button>
-          </>
+          <p>Please log in to access protected content.</p>
         )}
+        
+        <Outlet />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </AuthContext.Provider>
   );
 }
 
