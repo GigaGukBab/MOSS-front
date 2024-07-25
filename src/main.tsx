@@ -3,20 +3,19 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import ErrorPage from './error-page.tsx';
+import DashboardPage from './routes/DashboardPage.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ProtectedPage from './ProtectedPage.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     errorElement: <ErrorPage />,
-    children: [
-      {
-        path: 'protected',
-        element: <ProtectedPage />,
-      },
-    ],
+  },
+  {
+    path: '/dashboard',
+    element: <DashboardPage />,
+    errorElement: <ErrorPage />,
   },
 ]);
 

@@ -1,6 +1,6 @@
-import { useState, useEffect, createContext } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate, Outlet } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './App.css';
 
 interface User {
@@ -9,15 +9,6 @@ interface User {
   auth0Id: string;
   __v: number;
 }
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
-}
-
-export const AuthContext = createContext<AuthContextType | null>(null);
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -73,38 +64,26 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  const authContextValue: AuthContextType = {
-    user,
-    isAuthenticated: !!user,
-    login: handleLogin,
-    logout: handleLogout,
-  };
-
   return (
-    <AuthContext.Provider value={authContextValue}>
-      <div>
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/protected">Protected Page</Link></li>
-            {user ? (
-              <li><button onClick={handleLogout}>Logout</button></li>
-            ) : (
-              <li><Link to="/login">Login</Link></li>
-            )}
-          </ul>
-        </nav>
+    <div>
+      <nav>
+        <ul>
+          <button>
+            <Link to="/">Home</Link>
+          </button>
+          <button>
+            <Link to="/dashboard">Dashboard</Link>
+          </button>
+          {user ? (
+            <button onClick={handleLogout}>Logout</button>
+          ) : (
+            <button onClick={handleLogin}>Login</button>
+          )}
+        </ul>
+      </nav>
 
-        <h1>Welcome to the App</h1>
-        {user ? (
-          <p>Hello, {user.username}!</p>
-        ) : (
-          <p>Please log in to access protected content.</p>
-        )}
-        
-        <Outlet />
-      </div>
-    </AuthContext.Provider>
+      {/* ... (rest of the component) */}
+    </div>
   );
 }
 
