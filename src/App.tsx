@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import './App.css';
 
 interface User {
@@ -18,27 +18,27 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get<User>(
+          `${API_BASE_URL}/api/auth/status`,
+          { withCredentials: true }
+        );
+        if (response.data && response.data._id) {
+          setUser(response.data);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     checkAuthStatus();
   }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get<User>(
-        `${API_BASE_URL}/api/auth/status`,
-        { withCredentials: true }
-      );
-      if (response.data && response.data._id) {
-        setUser(response.data);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Authentication check failed:', error);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogin = () => {
     window.location.href = `${API_BASE_URL}/api/auth/auth0`;
@@ -60,29 +60,32 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <nav>
-        <ul>
-          <button>
-            <Link to="/">Home</Link>
-          </button>
-          <button>
-            <Link to="/dashboard">Dashboard</Link>
-          </button>
-          {user ? (
-            <button onClick={handleLogout}>Logout</button>
-          ) : (
-            <button onClick={handleLogin}>Login</button>
-          )}
-        </ul>
-      </nav>
-
-      {/* ... (rest of the component) */}
+      <header>
+        <div>당신이 상상하는 모든 것.</div>
+      </header>
+      <main>
+        <Outlet />
+      </main>
+      {user ? (
+        <button onClick={handleLogout}>Logout</button>
+      ) : (
+        <button onClick={handleLogin}>Login</button>
+      )}
+      <footer>
+        <p>&copy; 2024 My Website. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
