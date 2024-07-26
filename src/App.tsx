@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import './App.css';
-
-interface User {
-  _id: string;
-  username: string;
-  auth0Id: string;
-  __v: number;
-}
+import type { User } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
