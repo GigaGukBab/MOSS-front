@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
-interface User {
-  _id: string;
-  username: string;
-  auth0Id: string;
-  __v: number;
-}
+import type { User } from '../types';
+import './Dashboard.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -52,8 +47,7 @@ function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      <p>Welcome, {user.username}!</p>
-      {/* 대시보드의 다른 내용들... */}
+      <p>{user.username}님 환영합니다!</p>
     </div>
   );
 }

@@ -3,8 +3,7 @@ import axios from 'axios';
 import { Outlet, useNavigate } from 'react-router-dom';
 import './App.css';
 import type { User } from './types';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+import Header from './components/Header';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -14,10 +13,9 @@ function App() {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await axios.get<User>(
-          `${API_BASE_URL}/api/auth/status`,
-          { withCredentials: true }
-        );
+        const response = await axios.get<User>(`/api/auth/status`, {
+          withCredentials: true,
+        });
         if (response.data && response.data._id) {
           setUser(response.data);
         } else {
@@ -35,16 +33,12 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = `${API_BASE_URL}/api/auth/auth0`;
+    window.location.href = `/api/auth/auth0`;
   };
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        `${API_BASE_URL}/api/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await axios.post(`/api/auth/logout`, {}, { withCredentials: true });
       setUser(null);
       localStorage.clear();
       sessionStorage.clear();
@@ -66,17 +60,16 @@ function App() {
 
   return (
     <div>
-      <header>
-        <div>당신이 상상하는 모든 것.</div>
-      </header>
+      <Header />
+      <div className="header-content">당신이 상상하는 모든 것.</div>
       <main>
         <Outlet />
+        {user ? (
+          <button onClick={handleLogout}>로그아웃</button>
+        ) : (
+          <button onClick={handleLogin}>로그인</button>
+        )}
       </main>
-      {user ? (
-        <button onClick={handleLogout}>Logout</button>
-      ) : (
-        <button onClick={handleLogin}>Login</button>
-      )}
       <footer>
         <p>&copy; 2024 My Website. All rights reserved.</p>
       </footer>
