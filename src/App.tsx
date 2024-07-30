@@ -35,7 +35,7 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = '/api/auth/auth0';
+    window.location.href = `${API_URL}/api/auth/auth0`;
   };
 
   const handleLogout = async () => {
