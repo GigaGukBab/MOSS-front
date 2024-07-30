@@ -4,7 +4,7 @@ import axios from 'axios';
 import type { User } from '../types';
 import './Dashboard.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
@@ -17,10 +17,9 @@ function Dashboard() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get<User>(
-        `${API_BASE_URL}/api/auth/status`,
-        { withCredentials: true }
-      );
+      const response = await axios.get<User>(`${API_URL}/api/auth/status`, {
+        withCredentials: true,
+      });
       if (response.data && response.data._id) {
         setUser(response.data);
       } else {
