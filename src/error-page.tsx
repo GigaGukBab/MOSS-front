@@ -1,4 +1,5 @@
 import { useRouteError } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface RouteError {
   statusText?: string;
@@ -14,6 +15,8 @@ function isRouteError(error: unknown): error is RouteError {
 }
 
 export default function ErrorPage() {
+  const navigate = useNavigate();
+
   const error = useRouteError();
   console.error(error);
 
@@ -25,10 +28,17 @@ export default function ErrorPage() {
   return (
     <div id="error-page">
       <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
+      <p>죄송합니다. 페이지를 찾을 수 없습니다.</p>
       <p>
         <i>{errorMessage}</i>
       </p>
+      <button
+        onClick={() => {
+          navigate(-1);
+        }}
+      >
+        돌아가기
+      </button>
     </div>
   );
 }
